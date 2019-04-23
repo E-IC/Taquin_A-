@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		body{
+			background-image: url("fun.png");
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			background-size: 100% 100%;
+		}
+		input{
+			width :80px;
+			height: 80px;
+			background-color: #4d4dff;
+			border: 2px solid red;
+			border-radius: 12px;
+			text-align: center;
+			font-size: 40px;
+			font-style: italic;
+			font-family: fantasy;
+		}
+		h1 { color: #7c795d; font-family: 'Trocchi', serif; font-size: 45px; font-weight: normal; line-height: 48px; margin: auto;text-align: center;margin-bottom: 20px; }
+
+h2 { color: #7c700d; font-family: 'Source Sans Pro', sans-serif; font-size: 28px; font-weight: 400; line-height: 32px; margin: auto;text-align: center;margin-bottom: 50px; }
+table{
+	width: 400px;
+	background-color: white;
+	font-size: 24px;
+	align-content: center;
+	font-family: fantasy;
+	font-style: oblique;
+	color: blue;
+	margin: auto;
+	}
+	</style>
+
+</head>
+<body>
+	<h1>solution Jeux de taquin en utilisant l'inteligence artificiel (algorithme ==> A*)</h1>
+	<h2> ==> commence par insert les inputs svp (chaque valeur de 1 a 8 une seul fois la 9 eme valeur est libre)</h2>
+	<div>
+	<div style="background-color: #33ff99; width: 280px; height: 280px;border: 2px solid black;margin: auto;">
+		<form >
+			<table id="example" class="display" style="width:100%">
+				
+		            <tr>
+		                <td><input type="number" id="r11" name="r1"  min="1" max="9" onchange='determine("r1")'></td>
+		               	<td><input type="number" id="r12" name="r2"  min="1" max="9" onchange='determine("r2")'></td>
+		               	<td><input type="number" id="r13" name="r3"  min="1" max="9" onchange='determine("r3")'></td>
+		                
+		            </tr>
+		            <tr>  
+		                <td><input type="number" id="r21" name="r4"  min="1" max="9" onchange='determine("r4")'></td>
+		               	<td><input type="number" id="r22" name="r5"  min="1" max="9" onchange='determine("r5")'></td>
+		               	<td><input type="number" id="r23" name="r6"  min="1" max="9" onchange='determine("r6")'></td>
+		            </tr>
+		            <tr>  
+		                <td><input type="number" id="r31" name="r7"  min="1" max="9" onchange='determine("r7")'></td>
+		               	<td><input type="number" id="r32" name="r8"  min="1" max="9" onchange='determine("r8")'></td>
+		               	<td><input type="number" id="r33" name="r9"  min="1" max="9" onchange='determine("r9")'></td>
+		            </tr>
+
+		    </table>
+
+		</form>
+	</div>
+	<div style="width: 280px;margin: auto;"><input type="submit" value="start the fun" onclick="funstart()" style="width: 280px;background-color: white;margin-top: 30px"></div>
+
+			<div id="test"></div>
+			
+
+		
+
+</div>
+	
+
+
+ <script type="text/javascript" language="javascript">
+ 	function determine(name) {
+	 	//document.write("nonp");
+	  	var i=1;
+	  	i=1;
+	  	for (var j = 1; j < 9; j++) {
+	  		//document.write(name =="r".concat("",""+ j +""));
+	  		if (name == "r".concat("",""+ j +"")) {
+	  			//document.write("blaaa");
+	  		} 
+	  		else {
+	  			if (document.getElementsByName("r".concat("",""+ j +""))[0].value != "") {
+	  				i++;
+	  				//document.write("yes");
+	  			}
+	  		}
+	  	}
+	  	//document.write("no
+	  	//document.write(document.getElementsByName(name)[0].value);
+	  	if (i==9) {
+	  		//document.write(i);
+	  		document.getElementsByName(""+name+"")[0].value = "";
+	  		//getElementsByName("r".concat("",""+ j +""))[0].innerHTML = "";
+	  	}
+	  	//document.write();
+	}
+	function heuristique(Init){
+		var i=9;
+		if (Init[0][0]==1) {
+			i--;
+		}
+		if (Init[0][1]==2) {
+			i--;
+		}
+		if (Init[0][2]==3) {
+			i--;
+		}
+		if (Init[1][0]==4) {
+			i--;
+		}
+		if (Init[1][1]==5) {
+			i--;
+		}
+		if (Init[1][2]==6) {
+			i--;
+		}
+		if (Init[2][0]==7) {
+			i--;
+		}
+		if (Init[2][1]==8) {
+			i--;
+		}
+		if (Init[2][2]=="") {
+			i--;
+		}
+		return i;
+	}
+	
+	function funstart(){
+		var Init=[];
+		var working=[];
+		//var heur=[];
+		for (var j = 1; j < 4; j++) {
+			var temp=[];
+			for (var i = 1; i < 4; i++) {
+				temp.push(document.getElementById("r".concat("",""+ j +""+i+"")).value)
+  			}
+  			Init.push(temp);
+  		}
+  		working.push([Init,heuristique(Init)]);
+  		//document.write(working[0][0]);
+  		//document.write(heuristique(Init));
+  		var passedby=[];
+  		workthis(working,passedby);
+  	}
+  	function fill(tab){
+  		for (var j = 1; j < 4; j++) {
+			
+			for (var i = 1; i < 4; i++) {
+					document.getElementById("w".concat("",""+ j +""+i+"")).innerHTML = tab[j-1][i-1];
+			}
+		}
+  	}
+  	function workthis(working,passedby){
+  		//sleep(10);
+  		document.getElementById("test").innerHTML=document.getElementById("test").innerHTML+'<table id="example" border="2"><tr><td><p id="w11">'+ working[0][0][0][0]+'</p></td><td><p id="w12">'+ working[0][0][0][1]+'</p></td><td><p id="w13">'+ working[0][0][0][2]+'</p></td></tr><tr><td><p id="w21">'+ working[0][0][1][0]+'</p></td><td><p id="w22">'+ working[0][0][1][1]+'</p></td><td><p id="w23">'+ working[0][0][1][2]+'</p></td></tr><tr><td><p id="w31">'+ working[0][0][2][0]+'</p></td><td><p id="w32">'+ working[0][0][2][1]+'</p></td><td><p id="w33">'+ working[0][0][2][2]+'</p></td></tr></table><br/>';
+  		if(working[0][1] >0 ){
+	  			
+  		var workit=[];
+  		
+  		for (var k = 0; k < 3; k++) {
+  			var tempwork =[];
+			for (var m = 0; m < 3; m++) {
+				if(working[0][0][k][m] == ""){
+						var j=k;
+						var i=m;
+					}
+					tempwork[m] = working[0][0][k][m];
+  			}
+  			workit.push(tempwork);
+  		}
+  		passedby.push(working.shift(working[0])); 
+					if (j-1 >=0) {
+						var did=0;
+						
+						var work=[];
+						for (var k = 0; k < 3; k++) {
+				  			var tempwork =[];
+							for (var m = 0; m < 3; m++) {
+									tempwork[m] = workit[k][m];
+				  			}
+				  			work.push(tempwork);
+				  		}
+
+						var temp =work[j-1][i];
+						work[j-1][i]=work[j][i];
+						work[j][i]=temp;
+						//document.write(temp);
+						var passed=0;
+				  		for (var d = 0 ; d < passedby.length; d++) {
+				  			var isit=0;
+				  			for (var k = 0; k < 3; k++) {				  			
+								for (var m = 0; m < 3; m++) {
+										if(work[k][m]==passedby[d][0][k][m]){
+										isit++;
+									}
+					  			}				  			
+				  			}
+				  			if(isit == 9){
+				  				passed=1;
+				  			}
+				  		}
+				  		if (passed == 0) {
+							for (var k = 0; k < working.length; k++) {
+								if (heuristique(work) <= working[k][1]) {
+									working.splice(k, 0, [work,heuristique(work)]);
+									did++;
+									break;
+								}
+								
+							}
+							if(did==0){
+									working.push([work,heuristique(work)]);							
+							}
+						}
+						
+					}
+					//document.write(workit);
+				
+					if (j+1 <=2) {
+						var did=0;
+						var work=[];
+						for (var k = 0; k < 3; k++) {
+				  			var tempwork =[];
+							for (var m = 0; m < 3; m++) {
+									tempwork[m] = workit[k][m];
+				  			}
+				  			work.push(tempwork);
+				  		}
+						var temp =work[j+1][i];
+						work[j+1][i]=work[j][i];
+						work[j][i]=temp;
+						var passed=0;
+				  		for (var d = 0 ; d < passedby.length; d++) {
+				  			var isit=0;
+				  			for (var k = 0; k < 3; k++) {				  			
+								for (var m = 0; m < 3; m++) {
+										if(work[k][m]==passedby[d][0][k][m]){
+										isit++;
+									}
+					  			}				  			
+				  			}
+				  			if(isit == 9){
+				  				passed=1;
+				  			}
+				  		}
+				  		if (passed == 0) {
+							for (var k = 0; k < working.length; k++) {
+								if (heuristique(work) <= working[k][1]) {
+									working.splice(k, 0, [work,heuristique(work)]);
+									did++;
+									break;
+								}
+								
+							}
+							if(did==0){
+									working.push([work,heuristique(work)]);							
+							}
+						}
+						
+					}
+					//document.write(workit);
+					if (i+1 <=2) {
+						did=0;
+						var work=[];
+						for (var k = 0; k < 3; k++) {
+				  			var tempwork =[];
+							for (var m = 0; m < 3; m++) {
+									tempwork[m] = workit[k][m];
+				  			}
+				  			work.push(tempwork);
+				  		}
+						var temp =work[j][i+1];
+						work[j][i+1]=work[j][i];
+						work[j][i]=temp;
+						var passed=0;
+				  		for (var d = 0 ; d < passedby.length; d++) {
+				  			var isit=0;
+				  			for (var k = 0; k < 3; k++) {				  			
+								for (var m = 0; m < 3; m++) {
+										if(work[k][m]==passedby[d][0][k][m]){
+										isit++;
+									}
+					  			}				  			
+				  			}
+				  			if(isit == 9){
+				  				passed=1;
+				  			}
+				  		}
+				  		if (passed == 0) {
+							for (var k = 0; k < working.length; k++) {
+								if (heuristique(work) <= working[k][1]) {
+									working.splice(k, 0, [work,heuristique(work)]);
+									did++;
+									break;
+								}
+								
+							}
+							if(did==0){
+									working.push([work,heuristique(work)]);							
+							}
+						}
+					}
+					if (i-1 >=0) {
+						did=0;
+						var work=[];
+						for (var k = 0; k < 3; k++) {
+				  			var tempwork =[];
+							for (var m = 0; m < 3; m++) {
+									tempwork[m] = workit[k][m];
+				  			}
+				  			work.push(tempwork);
+				  		}
+						var temp =work[j][i-1];
+						work[j][i-1]=work[j][i];
+						work[j][i]=temp;
+						var passed=0;
+				  		for (var d = 0 ; d < passedby.length; d++) {
+				  			var isit=0;
+				  			for (var k = 0; k < 3; k++) {				  			
+								for (var m = 0; m < 3; m++) {
+									if(work[k][m]==passedby[d][0][k][m]){
+										isit++;
+									}
+					  			}				  			
+				  			}
+				  			if(isit == 9){
+				  				passed=1;
+				  			}
+				  		}
+				  		if (passed == 0) {
+
+							for (var k = 0; k < working.length; k++) {
+								if (heuristique(work) <= working[k][1]) {
+									working.splice(k, 0, [work,heuristique(work)]);
+									did++;
+									break;
+								}
+								
+							}
+							if(did==0){
+									working.push([work,heuristique(work)]);							
+							}
+						}
+					}
+
+				
+  		//document.write(working);
+  		//
+  		//document.write(working.length);
+
+  			//working=working[0];
+	  		if(working[0][1] >0 ){
+	  			//working=working[0];
+	  			workthis(working,passedby);
+	  		}
+	  		else{
+	  			//fill(working[0][0]);
+	  			document.getElementById("test").innerHTML=document.getElementById("test").innerHTML+'<table id="example" border="2"><tr><td><p id="w11">'+ working[0][0][0][0]+'</p></td><td><p id="w12">'+ working[0][0][0][1]+'</p></td><td><p id="w13">'+ working[0][0][0][2]+'</p></td></tr><tr><td><p id="w21">'+ working[0][0][1][0]+'</p></td><td><p id="w22">'+ working[0][0][1][1]+'</p></td><td><p id="w23">'+ working[0][0][1][2]+'</p></td></tr><tr><td><p id="w31">'+ working[0][0][2][0]+'</p></td><td><p id="w32">'+ working[0][0][2][1]+'</p></td><td><p id="w33">'+ working[0][0][2][2]+'</p></td></tr></table><br/>';
+	  		}
+  		}
+  		else{
+	  			//fill(working[0][0]);
+	  			document.getElementById("test").innerHTML=document.getElementById("test").innerHTML+'<table id="example" border="2"><tr><td><p id="w11">'+ working[0][0][0][0]+'</p></td><td><p id="w12">'+ working[0][0][0][1]+'</p></td><td><p id="w13">'+ working[0][0][0][2]+'</p></td></tr><tr><td><p id="w21">'+ working[0][0][1][0]+'</p></td><td><p id="w22">'+ working[0][0][1][1]+'</p></td><td><p id="w23">'+ working[0][0][1][2]+'</p></td></tr><tr><td><p id="w31">'+ working[0][0][2][0]+'</p></td><td><p id="w32">'+ working[0][0][2][1]+'</p></td><td><p id="w33">'+ working[0][0][2][2]+'</p></td></tr></table><br/>';
+	  		}
+  	}
+
+
+	
+</script> 
+<!--  -->
+</body>
+</html>
